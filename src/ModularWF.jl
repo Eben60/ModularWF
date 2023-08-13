@@ -22,9 +22,9 @@ macro mwf(arg)
     ex2 = makeexpr_allnames(modname)
     push!(innermod.args[3].args, ex1)
     ex3 = Expr(:toplevel, innermod, ex2)
-    return eval(ex3)
+    return esc(ex3) 
 end
 
-export mwf
+export @mwf
 
 end # module ModularWF
