@@ -15,15 +15,21 @@ end
 macro mwf(arg)
     if arg.head == :module
         innermod = arg
-    elseif arg.head == :block
-        innermod = arg.args[2] # this must be module
-        innermod.head != :module && error("@mwf macro must directly enclose a module. Here it enclosing :($(innermod.head))")
-    elseif arg.head in (:function, :struct)
-        fname = (arg.head == :function) ? arg.args[1].args[1] : arg.args[2]
+    elseif arg.head in (:function, :struct, Symbol("="))
+        if arg.head == :function
+            fname = arg.args[1].args[1]
+        elseif arg.head == :struct
+            fname = arg.args[2]
+        elseif arg.head == Symbol("=") && (arg.args[1]).head == :call
+            fname = (arg.args[1]).args[1] 
+        else
+            error("Parsing error with @mwf")
+        end           
+
         modname = Symbol("$(@__MODULE__)_$(fname)")
         innermod = Expr(:module, true, modname, Expr(:block, arg))
     else
-        error("cannot make sense of your arguments")
+        error("Parsing error with @mwf")
     end
     
     modname = innermod.args[2]
@@ -45,4 +51,13 @@ end
 
 export @mw2
 
+macro mw6(arg)
+    dump(arg)
+    @show arg.head
+    @show arg.args[1].head
+    @show (arg.args[1]).args[1] 
+    return nothing
 end 
+export @mw6
+
+end
