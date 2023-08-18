@@ -13,10 +13,19 @@ end
 end
 
 macro mwf(arg)
-    # arg is a begin ... end block
-    innermod = arg.args[2] # this must be module
-    innermod.head != :module && error("@mwf macro must directly enclose a module. Here it enclosing :($(innermod.head))")
-        
+    if arg.head == :module
+        innermod = arg
+    elseif arg.head == :block
+        innermod = arg.args[2] # this must be module
+        innermod.head != :module && error("@mwf macro must directly enclose a module. Here it enclosing :($(innermod.head))")
+    elseif arg.head == :function
+        fname = arg.args[1].args[1]
+        modname = Symbol("$(@__MODULE__)_$(fname)")
+        innermod = Expr(:module, true, modname, Expr(:block, arg))
+    else
+        error("cannot make sense of your arguments")
+    end
+    
     modname = innermod.args[2]
     ex1 = :(allnames = names($modname; all=true))
     ex2 = makeexpr_allnames(modname)
