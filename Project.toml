@@ -1,4 +1,11 @@
 name = "ModularWF"
-uuid = "73f129ab-0190-4a1d-9ad6-6042cc4d659f"
-authors = ["Eben60"]
-version = "0.1.2"
+version = "0.1.3"
+
+[compat]
+julia = "1.9"
+
+[extras]
+Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
+
+[targets]
+test = ["Test"]
