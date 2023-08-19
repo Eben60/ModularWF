@@ -1,4 +1,6 @@
 name = "ModularWF"
+uuid = "1521eb2b-bfa9-46ca-b1b8-6d87ef3fb17c"
+authors = ["Eben60"]
 version = "0.1.3"
 
 [compat]
