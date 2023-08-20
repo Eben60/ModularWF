@@ -19,7 +19,7 @@ end
 
 @mwf module M5
     
-    x1 = 1
+    const x1 = 1
     x2 = 2
     f6(x) = x+6
 
