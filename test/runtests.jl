@@ -33,6 +33,8 @@ end
 
 end
 
+@mwf const x9 = 9
+
 @test f1 === ModularWF_f1.f1
 @test f2 === ModularWF_f2.f2
 @test F3 === ModularWF_F3.F3
@@ -57,7 +59,7 @@ s4.y = 44
 @test x2 == 2
 @test f6(6) == 12
 @test f8(8) == 16
-
+@test x9 == 9
 
 s7 = F7(7.7)
 @test s7.z ≈ 7.7

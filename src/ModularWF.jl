@@ -15,17 +15,19 @@ end
 macro mwf(arg)
     if arg.head == :module
         wrappermod = arg
-    elseif arg.head in (:function, :struct, Symbol("="))
+    elseif arg.head in (:function, :struct, Symbol("="), :const)
         if arg.head == :function
             fname = arg.args[1].args[1]
         elseif arg.head == :struct
             fname = arg.args[2]
         elseif arg.head == Symbol("=") && (arg.args[1]).head == :call
+            fname = (arg.args[1]).args[1]
+        elseif arg.head == :const && (arg.args[1]).head == Symbol("=")
             fname = (arg.args[1]).args[1] 
         else
             error("Parsing error with @mwf")
         end           
-
+        
         modname = Symbol("$(@__MODULE__)_$(fname)")
         wrappermod = Expr(:module, true, modname, Expr(:block, arg))
     else
