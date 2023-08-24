@@ -1,3 +1,5 @@
+module MainTests
+
 using ModularWF
 using Test
 
@@ -39,7 +41,7 @@ end
 @test f2 === ModularWF_f2.f2
 @test F3 === ModularWF_F3.F3
 @test F4 === ModularWF_F4.F4
-@test M5 === Main.M5
+@test M5 === Main.MainTests.M5
 @test f6 === M5.f6
 @test F7 === M5.F7
 @test f8 === M5.f8
@@ -61,8 +63,12 @@ s4.y = 44
 @test f8(8) == 16
 @test x9 == 9
 
+# results in segfault:
+# @test_throws MethodError x9 = "9"
+
 s7 = F7(7.7)
 @test s7.z ≈ 7.7
 
-end
-;
+end # testset
+
+end # module

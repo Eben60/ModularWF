@@ -12,6 +12,8 @@ end
     return Meta.parse(s)
 end
 
+makeexpr_typedglobal(x::Symbol, m::Symbol) = Meta.parse("$(x)::typeof($(m).$(x)) = $(m).$(x)")
+
 macro mwf(arg)
     if arg.head == :module
         wrappermod = arg
@@ -36,8 +38,14 @@ macro mwf(arg)
     
     modname = wrappermod.args[2]
     ex1 = :(allnames = names($modname; all=true))
-    ex2 = makeexpr_allnames(modname)
     push!(wrappermod.args[3].args, ex1)
+
+    if arg.head == :const && isdefined(parentmodule(__module__), fname)
+        ex2 = makeexpr_typedglobal(fname, modname)
+    else
+        ex2 = makeexpr_allnames(modname)
+    end
+
     ex3 = Expr(:toplevel, wrappermod, ex2)
     return esc(ex3) 
 end
