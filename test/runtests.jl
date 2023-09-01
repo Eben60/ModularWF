@@ -66,7 +66,7 @@ s4.y = 44
 x10::Int = 10
 @test_throws MethodError (x10 = "10") # that OK
 
-# @test_throws MethodError( x9 = "9") # that results in segfault on Mac/ARM & Win10
+# @test_throws MethodError (x9 = "9") # that results in segfault on Mac/ARM & Win10
 
 s7 = F7(7.7)
 @test s7.z ≈ 7.7
