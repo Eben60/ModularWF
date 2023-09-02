@@ -12,7 +12,18 @@ end
     return Meta.parse(s)
 end
 
-makeexpr_typedglobal(x::Symbol, m::Symbol) = Meta.parse("$(x)::typeof($(m).$(x)) = $(m).$(x)")
+# makeexpr_typedglobal(x::Symbol, m::Symbol) = Meta.parse("$(x)::typeof($(m).$(x)) = $(m).$(x)")
+
+function makeexpr_typedglobal(m::Symbol, x::Symbol) 
+    println("been there")
+    x = x
+    m = m
+    ex = quote
+        $(x)::typeof($(m).$(x)) = $(m).$(x)
+    end
+    return ex
+end
+
 
 macro mwf(arg)
     if arg.head == :module
@@ -41,7 +52,7 @@ macro mwf(arg)
     push!(wrappermod.args[3].args, ex1)
 
     if arg.head == :const && isdefined(parentmodule(__module__), fname)
-        ex2 = makeexpr_typedglobal(fname, modname)
+        ex2 = makeexpr_typedglobal(esc(modname), esc(fname))
     else
         ex2 = makeexpr_allnames(modname)
     end
