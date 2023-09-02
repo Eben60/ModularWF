@@ -15,9 +15,6 @@ end
 # makeexpr_typedglobal(x::Symbol, m::Symbol) = Meta.parse("$(x)::typeof($(m).$(x)) = $(m).$(x)")
 
 function makeexpr_typedglobal(m::Symbol, x::Symbol) 
-    println("been there")
-    x = x
-    m = m
     ex = quote
         $(x)::typeof($(m).$(x)) = $(m).$(x)
     end
@@ -51,8 +48,8 @@ macro mwf(arg)
     ex1 = :(allnames = names($modname; all=true))
     push!(wrappermod.args[3].args, ex1)
 
-    if arg.head == :const && isdefined(parentmodule(__module__), fname)
-        ex2 = makeexpr_typedglobal(esc(modname), esc(fname))
+    if arg.head == :const && !isdefined(parentmodule(__module__), fname)
+        ex2 = makeexpr_typedglobal(modname, fname)
     else
         ex2 = makeexpr_allnames(modname)
     end
@@ -62,6 +59,13 @@ macro mwf(arg)
 end
 
 export @mwf
+
+
+# macro mfc(ex)
+#     ex.head === :const  || throw(ArgumentError("@mfc: `$(ex)` is not an assigment expression."))
+#     println("here we were")
+# end
+# export @mwc
 
 # function istypedglobal(v)
 #     notavar = (isvar = false, t_glob = false, btype = nothing)
