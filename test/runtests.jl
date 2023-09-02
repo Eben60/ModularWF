@@ -1,7 +1,10 @@
 module MainTests
 
 using ModularWF
+using ModularWF: istypedglobal
 using Test
+
+x11::Int = 11
 
 @testset "ModularWF" begin
     
@@ -64,6 +67,9 @@ s4.y = 44
 @test x9 == 9
 
 x10::Int = 10
+
+@test istypedglobal(@__MODULE__, :x9).t_glob
+@test istypedglobal(@__MODULE__, :x11).t_glob
 @test_throws MethodError (x10 = "10") # that OK
 
 # @test_throws MethodError (x9 = "9") # that results in segfault on Mac/ARM & Win10

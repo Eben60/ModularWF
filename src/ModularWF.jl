@@ -52,4 +52,24 @@ end
 
 export @mwf
 
+# function istypedglobal(v)
+#     notavar = (isvar = false, t_glob = false, btype = nothing)
+#     ! isdefined(@__MODULE__, v) && return notavar
+#     eval(v) isa Function && return notavar
+#     btype = Core.get_binding_type(@__MODULE__, v)
+#     t_glob = (btype != Any)
+#     return (; isvar = true, brype, t_glob)
+# end
+
+function istypedglobal(m, v)
+    notavar = (isvar = false, t_glob = false, btype = nothing)
+    ! isdefined(m, v) && (println("unknown"); return notavar)
+    getproperty(m, v) isa Function && return notavar
+    btype = Core.get_binding_type(m, v)
+    t_glob = (btype != Any)
+    return (; isvar = true, btype, t_glob)
+end
+
+# export istypedglobal
+
 end
