@@ -1,15 +1,16 @@
 module ModularWF
 
-function makeexpr_allnames(modname) 
-    s = 
-"""
-for n in $modname.allnames
-    if Base.isidentifier(n) && n ∉ (Symbol("$modname"), :eval, :include) && ! isdefined(Base, n)
-        eval(Meta.parse("\$n = $modname.\$n"))
+function makeexpr_allnames(modname)
+
+    s = quote 
+        m = $(modname)
+        for n in m.allnames
+            if Base.isidentifier(n) && n ∉ (Symbol("m"), :eval, :include) && ! isdefined(Base, n)
+                eval(Meta.parse("\$(String(n)) = m.\$(String(n))"))
+            end
+        end
     end
-end
-"""
-    return Meta.parse(s)
+    return s
 end
 
 # makeexpr_typedglobal(x::Symbol, m::Symbol) = Meta.parse("$(x)::typeof($(m).$(x)) = $(m).$(x)")
@@ -51,6 +52,7 @@ macro mwf(arg)
     if arg.head == :const && !isdefined(parentmodule(__module__), fname)
         ex2 = makeexpr_typedglobal(modname, fname)
     else
+        println(modname)
         ex2 = makeexpr_allnames(modname)
     end
 
