@@ -4,8 +4,6 @@ using ModularWF
 using ModularWF: istypedglobal
 using Test
 
-x11::Int = 11
-
 @testset "ModularWF" begin
     
 @mwf function f1(x) 
@@ -25,6 +23,7 @@ end
 @mwf module M5
     
     const x1 = 1
+    x11::String = "11"
     x2 = 2
     f6(x) = x+6
 
@@ -61,16 +60,15 @@ s4.y = 44
 @test s4.y == 44
 
 @test x1 == 1
+@test x11 == "11"
 @test x2 == 2
 @test f6(6) == 12
 @test f8(8) == 16
 @test x9 == 9
 
-x10::Int = 10
-
+@test istypedglobal(@__MODULE__, :x1).t_glob
 @test istypedglobal(@__MODULE__, :x9).t_glob
 @test istypedglobal(@__MODULE__, :x11).t_glob
-@test_throws MethodError (x10 = "10") # that OK
 
 # @test_throws MethodError (x9 = "9") # that results in segfault on Mac/ARM & Win10
 
