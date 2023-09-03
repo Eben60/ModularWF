@@ -1,14 +1,20 @@
 module ModularWF
 
-function makeexpr_allnames(modname) 
+function makeexpr_allnames(modname)
+    pckname = @__MODULE__
     s = 
-"""
-for n in $modname.allnames
-    if Base.isidentifier(n) && n ∉ (Symbol("$modname"), :eval, :include) && ! isdefined(Base, n)
-        eval(Meta.parse("\$n = $modname.\$n"))
+    """
+    for n in $modname.allnames
+        if Base.isidentifier(n) && n ∉ (Symbol("$modname"), :eval, :include) && ! isdefined(Base, n)
+            r = rand(Bool)
+            if $pckname.istypedvar(:$modname, Symbol("\$n"))  # :\$n )
+                eval(Meta.parse("\$n ::typeof($modname.\$n)= $modname.\$n"))
+            else
+                eval(Meta.parse("\$n = $modname.\$n"))
+            end
+        end
     end
-end
-"""
+    """
     return Meta.parse(s)
 end
 
@@ -84,7 +90,13 @@ function istypedglobal(m, v)
     t_glob = (btype != Any)
     return (; isvar = true, btype, t_glob)
 end
-
 # export istypedglobal
+
+istypedvar(m, v) = isdefined(m, v) && 
+    ((isconst(m, v) && !(getproperty(m, v) isa Function)) ||
+    Core.get_binding_type(m, v) != Any)
+# export istypedvar
+
+
 
 end
